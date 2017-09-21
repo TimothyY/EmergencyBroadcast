@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Emergency Broadcast</string>
+    <string name="user_profile">User Profile</string>
+    <string name="emergency_contact_list">Contact List</string>
+    <string name="sent_messages">Sent Messages</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="save">SAVE</string>
+    <string name="compose_draft_hint">Compose your message draft here. \nThis message will be sent to your emergency contact list when you dropped your phone.</string>
+    <string name="address_hint">What is your current address?</string>
+    <string name="phone_number_hint">What is your phone number?</string>
+    <string name="name_hint">What is your name?</string>
+</resources>

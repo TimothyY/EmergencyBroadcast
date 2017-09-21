@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sentMessages"
+        android:icon="@drawable/ic_message_black_24dp"
+        android:title="@string/sent_messages" />
+
+    <item
+        android:id="@+id/emergencyContactList"
+        android:icon="@drawable/ic_contact_phone_black_24dp"
+        android:title="@string/emergency_contact_list" />
+
+    <item
+        android:id="@+id/userProfile"
+        android:icon="@drawable/ic_account_circle_black_24dp"
+        android:title="@string/user_profile" />
+
+
+</menu>
