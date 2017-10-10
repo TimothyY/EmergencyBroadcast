@@ -2,6 +2,7 @@ package com.timeandtidestudio.emergencybroadcast.Fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.timeandtidestudio.emergencybroadcast.Adapter.SentMessagesAdapter;
+import com.timeandtidestudio.emergencybroadcast.MessageDetailActivity;
 import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
 
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 public class SentMessagesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     ArrayList<SentMessage> sentMessages;
+    Context mCtx;
 
     public SentMessagesFragment() {
         // Required empty public constructor
@@ -43,6 +46,7 @@ public class SentMessagesFragment extends Fragment implements AdapterView.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {}
+        mCtx = getActivity();
     }
 
     @Override
@@ -51,8 +55,8 @@ public class SentMessagesFragment extends Fragment implements AdapterView.OnItem
         View view = inflater.inflate(R.layout.fragment_sent_messages, container, false);
 
         sentMessages = new ArrayList<>();
-        sentMessages.add(new SentMessage("TITLE_SENT_MESSAGE_01",getString(R.string.lorem_ipsum),"xxx"));
-        sentMessages.add(new SentMessage("TITLE_SENT_MESSAGE_02",getString(R.string.lorem_ipsum),"yyy"));
+        sentMessages.add(new SentMessage("01 January 1972",getString(R.string.lorem_ipsum)));
+        sentMessages.add(new SentMessage("01 January 1971",getString(R.string.lorem_ipsum)));
 
         Context context = view.getContext();
         ListView lvSentMessages = (ListView) view.findViewById(R.id.lvSentMessages);
@@ -63,6 +67,8 @@ public class SentMessagesFragment extends Fragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), ""+position, Toast.LENGTH_SHORT).show();
+        Intent toDetailMessageIntent = new Intent(mCtx, MessageDetailActivity.class);
+        toDetailMessageIntent.putExtra("clickedSentMessage",sentMessages.get(position));
+        startActivity(toDetailMessageIntent);
     }
 }

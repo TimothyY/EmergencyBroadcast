@@ -47,9 +47,9 @@ public class SentMessagesAdapter extends BaseAdapter {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_sent_messages, viewGroup, false);
         TextView tvDate = (TextView) rowView.findViewById(R.id.tvDate);
-        tvDate.setText(getItem(i).title);
+        tvDate.setText(getItem(i).date);
         TextView tvMessage = (TextView) rowView.findViewById(R.id.tvMessage);
-        tvMessage.setText(getItem(i).content);
+        tvMessage.setText(getItem(i).message);
         return rowView;
     }
 }

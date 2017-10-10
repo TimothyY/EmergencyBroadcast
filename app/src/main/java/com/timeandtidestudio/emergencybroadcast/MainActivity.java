@@ -1,5 +1,7 @@
 package com.timeandtidestudio.emergencybroadcast;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -17,21 +19,36 @@ import com.timeandtidestudio.emergencybroadcast.Fragment.UserProfileFragment;
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
+    Context mCtx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mCtx = this;
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, SentMessagesFragment.newInstance(), "sentMessagesFragmentTag")
+                .commit();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setImageResource(R.drawable.ic_create_white_24dp);
+        fab.setTag("message");
+        fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(fab.getTag()=="message"){
+                    Intent toCreateMessage = new Intent(mCtx,CreateMessageActivity.class);
+                    startActivity(toCreateMessage);
+                }else if(fab.getTag()=="contact"){
+                    Intent toUpdateContact = new Intent(mCtx,UpdateContactActivity.class);
+                    startActivity(toUpdateContact);
+                }
             }
         });
     }

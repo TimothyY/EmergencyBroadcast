@@ -2,12 +2,15 @@ package com.timeandtidestudio.emergencybroadcast.Model;
 
 import android.util.Log;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 9/25/2017.
  */
 
-public class EmergencyContact {
+public class EmergencyContact implements Serializable{
 
+    public int id;
     public String name;
     public String phone;
     public String initial;

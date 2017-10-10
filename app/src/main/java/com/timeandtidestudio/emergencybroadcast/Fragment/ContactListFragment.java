@@ -2,6 +2,7 @@ package com.timeandtidestudio.emergencybroadcast.Fragment;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.timeandtidestudio.emergencybroadcast.Adapter.SentMessagesAdapter;
 import com.timeandtidestudio.emergencybroadcast.Model.EmergencyContact;
 import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
+import com.timeandtidestudio.emergencybroadcast.UpdateContactActivity;
 
 import java.util.ArrayList;
 
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 public class ContactListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     ArrayList<EmergencyContact> contactList;
+    Context mCtx;
 
     public ContactListFragment() {
         // Required empty public constructor
@@ -43,6 +46,7 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {}
+        mCtx = getActivity();
     }
 
     @Override
@@ -51,8 +55,8 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
 
         contactList = new ArrayList<>();
-        contactList.add(new EmergencyContact("Steve Roger","content01"));
-        contactList.add(new EmergencyContact("Steve","content02"));
+        contactList.add(new EmergencyContact("Steve Roger","123"));
+        contactList.add(new EmergencyContact("Steve","456"));
 
         Context context = view.getContext();
         ListView lvContactList = (ListView) view.findViewById(R.id.lvContactList);
@@ -63,6 +67,8 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), contactList.get(position).initial, Toast.LENGTH_SHORT).show();
+        Intent toUpdateContactActivity = new Intent(mCtx, UpdateContactActivity.class);
+        toUpdateContactActivity.putExtra("selectedContact",contactList.get(position));
+        startActivity(toUpdateContactActivity);
     }
 }

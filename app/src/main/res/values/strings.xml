@@ -15,5 +15,8 @@
     <string name="insert_contact_name_here">Insert contact name here</string>
     <string name="contact_phone_number">Contact Phone Number</string>
     <string name="insert_contact_phone_number_here">Insert contact phone number here</string>
-    <string name="lorem_ipsum">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</string>
+    <string name="lorem_ipsum">It is a long established fact that a reader will be distracted by the readable message of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, message here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</string>
+    <string name="broadcast_warning">The following message will be broadcasted to all of your emergency contact !</string>
+    <string name="send_message">Send Message</string>
+    <string name="compose_manual_message_draft_hint">Compose your message draft here.</string>
 </resources>

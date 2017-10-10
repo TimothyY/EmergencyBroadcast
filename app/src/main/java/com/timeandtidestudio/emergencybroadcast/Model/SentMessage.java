@@ -1,18 +1,23 @@
 package com.timeandtidestudio.emergencybroadcast.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by User on 9/25/2017.
  */
 
-public class SentMessage {
+public class SentMessage implements Serializable{
 
-    public String title;
-    public String content;
+    public String date;
+    public String hour;
+    public String message;
     public String timestamp;
 
-    public SentMessage(String title, String content, String timestamp) {
-        this.title = title;
-        this.content = content;
+    public SentMessage(String timestamp,String message) {
         this.timestamp = timestamp;
+        this.date = timestamp;
+        this.hour = timestamp;
+        this.message = message;
     }
+
 }
