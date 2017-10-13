@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class ContactListAdapter extends BaseAdapter {
 
-    ArrayList<EmergencyContact> contactList;
+    public ArrayList<EmergencyContact> contactList;
     Context mCtx; //mengenali adapter dipanggil di Activity
 
     public ContactListAdapter(Context ctx, ArrayList<EmergencyContact> contactList) {

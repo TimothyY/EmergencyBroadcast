@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.timeandtidestudio.emergencybroadcast.Adapter.ContactListAdapter;
 import com.timeandtidestudio.emergencybroadcast.Adapter.SentMessagesAdapter;
+import com.timeandtidestudio.emergencybroadcast.Database.ContactsDAO;
 import com.timeandtidestudio.emergencybroadcast.Model.EmergencyContact;
 import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
@@ -28,9 +30,6 @@ import java.util.ArrayList;
  */
 public class ContactListFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    ArrayList<EmergencyContact> contactList;
-    Context mCtx;
-
     public ContactListFragment() {
         // Required empty public constructor
     }
@@ -42,6 +41,7 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         return fragment;
     }
 
+    Context mCtx;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,20 +49,29 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         mCtx = getActivity();
     }
 
+    ArrayList<EmergencyContact> contactList;
+    ContactListAdapter contactListAdapter;
+    ListView lvContactList;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
 
-        contactList = new ArrayList<>();
-        contactList.add(new EmergencyContact("Steve Roger","123"));
-        contactList.add(new EmergencyContact("Steve","456"));
-
-        Context context = view.getContext();
-        ListView lvContactList = (ListView) view.findViewById(R.id.lvContactList);
-        lvContactList.setAdapter(new ContactListAdapter(getActivity(), contactList)); //on real case, this will be rplaced with data from sqlite/internet
+        mCtx = getActivity();
+        lvContactList = (ListView) view.findViewById(R.id.lvContactList);
+        refreshList();
+        lvContactList.setAdapter(contactListAdapter); //on real case, this will be rplaced with data from sqlite/internet
         lvContactList.setOnItemClickListener(this);
         return view;
+    }
+
+
+    ContactsDAO contactsDAO;
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshList();
     }
 
     @Override
@@ -70,5 +79,12 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         Intent toUpdateContactActivity = new Intent(mCtx, UpdateContactActivity.class);
         toUpdateContactActivity.putExtra("selectedContact",contactList.get(position));
         startActivity(toUpdateContactActivity);
+    }
+
+    public void refreshList(){
+        contactsDAO = new ContactsDAO();
+        contactListAdapter = new ContactListAdapter(mCtx, contactsDAO.loadContacts(mCtx));
+        contactListAdapter.notifyDataSetChanged();
+        lvContactList.setAdapter(contactListAdapter);
     }
 }

@@ -4,10 +4,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.timeandtidestudio.emergencybroadcast.Model.EmergencyContact;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * Created by User on 10/10/2017.
@@ -15,77 +19,51 @@ import java.util.ArrayList;
 
 public class ContactsDAO {
 
-    private String loadContacts(Context ctx){
-        String draftedMessage = null;
+    public ArrayList<EmergencyContact> loadContacts(Context ctx){
+        ArrayList<EmergencyContact> contacts = new ArrayList<>();
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
-        Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_DRAFTEDMESSAGE, null, null, null, null, null, null);
+        Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_CONTACTS, null, null, null, null, null, null);
         resultCursor.moveToFirst();
-        draftedMessage = convertCursorIntoDraftedMessage(resultCursor);
+        contacts = convertCursorIntoContacts(ctx,resultCursor);
+        Collections.sort(contacts);
         db.close();
-        return draftedMessage;
+        return contacts;
     }
 
-    public void saveDraftedMessage(Context ctx, String draftedMessage){
+    public void saveEmergencyContact(Context ctx, EmergencyContact contact){
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(EBSQLiteHelper.FIELD_DRAFTEDMESSAGE_ID, 1);
-        cv.put(EBSQLiteHelper.FIELD_DRAFTEDMESSAGE_CONTENT, draftedMessage);
-        db.insertWithOnConflict(EBSQLiteHelper.TABLE_DRAFTEDMESSAGE, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+        if(contact.id!=0){
+            cv.put(EBSQLiteHelper.FIELD_CONTACTS_ID, contact.id);
+        }
+        cv.put(EBSQLiteHelper.FIELD_CONTACTS_NAME, contact.name);
+        cv.put(EBSQLiteHelper.FIELD_CONTACTS_PHONE, contact.phone);
+        db.insertWithOnConflict(EBSQLiteHelper.TABLE_CONTACTS, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
     }
 
-    public void deletePromotion(Context ctx, PromotionModel promotion) {
-        SQLiteDatabase db = TravelPlanSQLiteHelper.getInstance(ctx).getWritableDatabase();
-        String selection = TravelPlanSQLiteHelper.FIELD_PROMOTION_ID + "=?";
-        String[] selectionArgs = {promotion.identifier};
-        db.delete(TravelPlanSQLiteHelper.TABLE_PROMOTIONS,selection, selectionArgs);
+    public void deleteEmergencyContact(Context ctx, EmergencyContact contact) {
+        SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getWritableDatabase();
+        String selection = EBSQLiteHelper.FIELD_CONTACTS_NAME + "LIKE ? AND " + EBSQLiteHelper.FIELD_CONTACTS_PHONE + "LIKE ?";
+        String[] selectionArgs = {contact.name,contact.phone};
+        db.delete(EBSQLiteHelper.TABLE_CONTACTS,selection, selectionArgs);
     }
 
-    public ArrayList<PromotionModel> convertCursorIntoPOIPromotions(Context ctx, Cursor resultCursor){
-        ArrayList<PromotionModel> listPromotions = new ArrayList<>();
+    public ArrayList<EmergencyContact> convertCursorIntoContacts(Context ctx, Cursor resultCursor){
+        ArrayList<EmergencyContact> contacts = new ArrayList<>();
         while (resultCursor.moveToNext()){
-            listPromotions.add(convertCursorIntoPOIPromotion(ctx, resultCursor));
+            contacts.add(convertCursorIntoEmergencyContact(ctx, resultCursor));
         }
-        return listPromotions;
+        return contacts;
     }
 
-    public EmergencyContact convertCursorIntoPOIPromotion(Context ctx, Cursor cursor){
+    public EmergencyContact convertCursorIntoEmergencyContact(Context ctx, Cursor cursor){
         EmergencyContact emergencyContact = null;
-        String name =
-        promotion.identifier = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_ID));
-        promotion.name = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_NAME));
-
-        POIModel poi = new POIModel();
-        poi.identifier = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_POIID));
-        poi.name = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_POINAME));
-        promotion.poi = poi;
-
-        /*
-        String poiID = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_POIID));
-        String poiSelection = TravelPlanSQLiteHelper.FIELD_DOWNLOADED_POI_ID + "=?";
-        String[] poiSelectionArgs = {poiID};
-        POIModel poi = new DownloadedPOIsDAO().getPOIs(ctx, poiSelection, poiSelectionArgs).get(0);
-        promotion.poi = poi;
-        */
-
-        String categoryID = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_CATEGORY));
-        String categorySelection = TravelPlanSQLiteHelper.FIELD_PROMOTIONCATEGORY_ID + "=?";
-        String[] categorySelectionArgs = {categoryID};
-        PromotionCategoryModel category = new PromotionCategoriesDAO().getPromotionCategories(ctx, categorySelection, categorySelectionArgs).get(0);
-        promotion.category = category;
-
-        String cityID = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_CITY));
-        String citySelection = TravelPlanSQLiteHelper.FIELD_CITIES_ID + "=?";
-        String[] citySelectionArgs = {cityID};
-        CityModel city = new CitiesDAO().getCities(ctx, citySelection, citySelectionArgs).get(0);
-        promotion.city = city;
-
-        promotion.description = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_DESCRIPTION));
-        promotion.startDate = DateTimeConverter.convertToDate(cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_STARTDATE)),DateTimeConverter.DATE_FORMAT);
-        promotion.endDate = DateTimeConverter.convertToDate(cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_ENDDATE)),DateTimeConverter.DATE_FORMAT);
-        promotion.picture = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_PICTURE));
-        promotion.imageIdentifier = cursor.getString(cursor.getColumnIndex(TravelPlanSQLiteHelper.FIELD_PROMOTION_IMAGEIDENTIFIER));
-        return promotion;
+        int id = cursor.getInt(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_ID));
+        String name = cursor.getString(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_NAME));
+        String number = cursor.getString(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_PHONE));
+        emergencyContact = new EmergencyContact(id,name,number);
+        return emergencyContact;
     }
 
 }
