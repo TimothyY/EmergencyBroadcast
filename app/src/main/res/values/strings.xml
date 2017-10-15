@@ -22,13 +22,11 @@
     <string name="contact_saved">Contact successfully updated !</string>
 
 
-
     <string name="action_advanced">Advanced</string>
     <string name="action_advanced_remove">Remove advanced</string>
     <string name="action_help">Help</string>
     <string name="action_about">About</string>
-    <string name="action_ken">Next of kin</string
-        >
+    <string name="action_ken">Next of kin</string>
     <string name="advanced_activity">Advanced</string>
     <string name="advanced_became">Advanced mode enabled. Access it using the overflow menu on the top right.</string>
     <string name="advanced_away_from">You\'re %d steps away from advanced mode.</string>

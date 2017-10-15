@@ -12,9 +12,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.Utils;
 import com.timeandtidestudio.emergencybroadcast.Fragment.ContactListFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.SentMessagesFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.UserProfileFragment;
+import com.timeandtidestudio.emergencybroadcast.Service.AlarmService;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent niat = new Intent(this,TestActivity.class);
+        startActivity(niat);
 
         mCtx = this;
 
@@ -51,6 +62,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (!Utils.isServiceRunning(this, AlarmService.class)) startDetector();
+
+        EventBus.getDefault().register(this);
+        SoundHelper.initializeSoundsHelper(this);
+        PreferencesHelper.initializePreferences(this);
+
+        if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
+            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, false);
+            startActivity(new Intent(this, WizardMain.class));
+        }
+
+        Controller.initializeController(getApplicationContext());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -90,5 +114,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
+
+    private void startDetector() {
+        startService(new Intent(this, AlarmService.class));
+    }
+
 
 }

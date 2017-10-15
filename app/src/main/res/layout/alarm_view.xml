@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background">
+    android:orientation="vertical">
 
     <View
         android:id="@+id/alarm_progress_background"
@@ -12,7 +11,7 @@
         android:background="@drawable/circle"
         android:layout_gravity="center"/>
 
-    <sintef.android.controller.utils.DonutProgress
+    <com.timeandtidestudio.emergencybroadcast.Controller.utils.DonutProgress
         android:id="@+id/alarm_progress"
         android:layout_width="260dp"
         android:layout_height="260dp"
