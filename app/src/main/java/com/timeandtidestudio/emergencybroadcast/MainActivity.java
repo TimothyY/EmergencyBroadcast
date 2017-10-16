@@ -21,6 +21,7 @@ import com.timeandtidestudio.emergencybroadcast.Fragment.ContactListFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.SentMessagesFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.UserProfileFragment;
 import com.timeandtidestudio.emergencybroadcast.Service.AlarmService;
+import com.timeandtidestudio.emergencybroadcast.wizard.WizardMain;
 
 import org.greenrobot.eventbus.EventBus;
 

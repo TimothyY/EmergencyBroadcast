@@ -17,4 +17,24 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Widget.FloatingHintEditText" parent="@android:style/Widget.EditText">
+        <item name="android:paddingTop">0dp</item>
+    </style>
+
+    <style name="WizardTheme" parent="AppTheme">
+    </style>
+
+    <style name="TextAppearanceFinish">
+        <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="ButtonBar" parent="@android:style/ButtonBar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+    </style>
+
+    <style name="ButtonBarButton">
+        <item name="android:minHeight">58dp</item>
+    </style>
+
 </resources>

@@ -78,7 +78,7 @@ public abstract class WizardTemplate extends Fragment {
 
         mPosition = getArguments().getInt(POSITION);
 
-        ButterKnife.inject(this, getView());
+        ButterKnife.bind(this, getView());
         init();
     }
 

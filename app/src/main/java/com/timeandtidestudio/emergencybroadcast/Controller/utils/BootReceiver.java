@@ -23,7 +23,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import sintef.android.gravity.AlarmService;
+import com.timeandtidestudio.emergencybroadcast.Service.AlarmService;
 
 public class BootReceiver extends BroadcastReceiver {
     @Override

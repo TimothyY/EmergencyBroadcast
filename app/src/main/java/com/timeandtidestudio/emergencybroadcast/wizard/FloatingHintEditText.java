@@ -28,7 +28,6 @@ import android.graphics.Paint.FontMetricsInt;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.widget.EditText;
 
 import com.timeandtidestudio.emergencybroadcast.R;
 
@@ -40,7 +39,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-public class FloatingHintEditText extends EditText {
+public class FloatingHintEditText extends android.support.v7.widget.AppCompatEditText {
     private static enum Animation { NONE, SHRINK, GROW }
 
     private final Paint mFloatingHintPaint = new Paint();

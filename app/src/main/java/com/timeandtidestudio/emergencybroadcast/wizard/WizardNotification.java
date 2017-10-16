@@ -30,13 +30,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import butterknife.InjectView;
-import sintef.android.gravity.R;
+import com.timeandtidestudio.emergencybroadcast.R;
+
+import butterknife.BindView;
 
 public class WizardNotification extends WizardTemplate {
 
-    @InjectView(R.id.wizard_notification_explanation_text)      public TextView mExplanationText;
-    @InjectView(R.id.wizard_notification_explanation_image)     public ImageView mExplanationImage;
+    @BindView(R.id.wizard_notification_explanation_text)      public TextView mExplanationText;
+    @BindView(R.id.wizard_notification_explanation_image)     public ImageView mExplanationImage;
 
     public static WizardNotification newInstance(int position) {
         return newInstance(WizardNotification.class, R.layout.wizard_notification, position);

@@ -30,9 +30,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import sintef.android.controller.common.Constants;
-import sintef.android.controller.utils.PreferencesHelper;
-import sintef.android.gravity.R;
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
+import com.timeandtidestudio.emergencybroadcast.R;
 
 /**
  * Created by samyboy89 on 24/02/15.

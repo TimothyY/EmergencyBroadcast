@@ -28,6 +28,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
+import com.timeandtidestudio.emergencybroadcast.R;
+import com.timeandtidestudio.emergencybroadcast.wizard.FloatingHintEditText;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -35,10 +40,10 @@ import butterknife.ButterKnife;
  */
 public class NextOfKinDialog extends Dialog {
 
-    @InjectView(R.id.dialog_next_of_kin_name)           public FloatingHintEditText mNameEdit;
-    @InjectView(R.id.dialog_next_of_kin_telephone)      public FloatingHintEditText mTelephoneEdit;
-    @InjectView(R.id.ok_button)                         public View mOK;
-    @InjectView(R.id.cancel_button)                     public View mCancel;
+    @BindView(R.id.dialog_next_of_kin_name)           public FloatingHintEditText mNameEdit;
+    @BindView(R.id.dialog_next_of_kin_telephone)      public FloatingHintEditText mTelephoneEdit;
+    @BindView(R.id.ok_button)                         public View mOK;
+    @BindView(R.id.cancel_button)                     public View mCancel;
 
     @SuppressLint("NewApi")
     public NextOfKinDialog(final Context context) {
@@ -51,7 +56,7 @@ public class NextOfKinDialog extends Dialog {
 
         setTitle(R.string.wizard_next_of_kin_header);
         setContentView(R.layout.dialog_next_of_kin);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         String name = PreferencesHelper.getString(Constants.PREFS_NEXT_OF_KIN_NAME);
         if (!name.equals(PreferencesHelper.INVALID_STRING)) mNameEdit.setText(name);

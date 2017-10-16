@@ -19,18 +19,20 @@ under the License.
 
 package com.timeandtidestudio.emergencybroadcast.wizard;
 
-import butterknife.InjectView;
-import sintef.android.controller.common.Constants;
-import sintef.android.controller.utils.PreferencesHelper;
-import sintef.android.gravity.R;
+
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
+import com.timeandtidestudio.emergencybroadcast.R;
+
+import butterknife.BindView;
 
 /**
  * Created by samyboy89 on 26/02/15.
  */
 public class WizardNextOfKin extends WizardTemplate {
 
-    @InjectView(R.id.wizard_next_of_kin_name)        public FloatingHintEditText mNameEdit;
-    @InjectView(R.id.wizard_next_of_kin_telephone)   public FloatingHintEditText mTelephoneEdit;
+    @BindView(R.id.wizard_next_of_kin_name)        public FloatingHintEditText mNameEdit;
+    @BindView(R.id.wizard_next_of_kin_telephone)   public FloatingHintEditText mTelephoneEdit;
 
     public static WizardNextOfKin newInstance(int position) {
         return newInstance(WizardNextOfKin.class, R.layout.wizard_next_of_kin, position);
