@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent niat = new Intent(this,TestActivity.class);
-        startActivity(niat);
-
         mCtx = this;
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -64,18 +61,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if (!Utils.isServiceRunning(this, AlarmService.class)) startDetector();
-
-        EventBus.getDefault().register(this);
-        SoundHelper.initializeSoundsHelper(this);
-        PreferencesHelper.initializePreferences(this);
-
-        if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
-            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, false);
-            startActivity(new Intent(this, WizardMain.class));
-        }
-
-        Controller.initializeController(getApplicationContext());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -115,10 +100,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
-
-    private void startDetector() {
-        startService(new Intent(this, AlarmService.class));
-    }
 
 
 }

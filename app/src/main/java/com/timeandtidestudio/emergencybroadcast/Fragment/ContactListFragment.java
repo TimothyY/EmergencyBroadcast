@@ -83,7 +83,8 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
 
     public void refreshList(){
         contactsDAO = new ContactsDAO();
-        contactListAdapter = new ContactListAdapter(mCtx, contactsDAO.loadContacts(mCtx));
+        contactList = contactsDAO.loadContacts(mCtx);
+        contactListAdapter = new ContactListAdapter(mCtx, contactList);
         contactListAdapter.notifyDataSetChanged();
         lvContactList.setAdapter(contactListAdapter);
     }
