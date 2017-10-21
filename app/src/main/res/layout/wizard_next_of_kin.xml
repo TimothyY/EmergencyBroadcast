@@ -20,7 +20,7 @@
         android:textColor="@color/white"
         android:gravity="center"/>
 
-    <sintef.android.gravity.wizard.FloatingHintEditText
+    <com.timeandtidestudio.emergencybroadcast.wizard.FloatingHintEditText
         android:id="@+id/wizard_next_of_kin_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         android:layout_marginBottom="12dp"
         android:layout_below="@+id/wizard_next_of_kin_header"/>
 
-    <sintef.android.gravity.wizard.FloatingHintEditText
+    <com.timeandtidestudio.emergencybroadcast.wizard.FloatingHintEditText
         android:id="@+id/wizard_next_of_kin_telephone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

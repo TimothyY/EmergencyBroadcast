@@ -36,6 +36,7 @@ import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
 import com.timeandtidestudio.emergencybroadcast.Controller.sensor.SensorEventBuffer;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -76,6 +77,7 @@ public class DeviceClient {
         return mWearableClient;
     }
 
+    @Subscribe
     public void onEvent(EventTypes event) {
         switch (event) {
             case START_ALARM:

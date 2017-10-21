@@ -38,10 +38,11 @@ import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
 import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
-import com.timeandtidestudio.emergencybroadcast.MainActivity;
+import com.timeandtidestudio.emergencybroadcast.MainActivity_Old;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 /**
  * Created by samyboy89 on 03/02/15.
@@ -133,6 +134,7 @@ public class AlarmService extends Service {
         return null;
     }
 
+    @Subscribe
     public synchronized void onEvent(EventTypes type) {
         switch (type) {
             case FALL_DETECTED:
@@ -141,12 +143,12 @@ public class AlarmService extends Service {
 
                 mTimerState = TimerState.RUNNING;
 
-                Intent start_app_intent = new Intent(this, MainActivity.class);
+                Intent start_app_intent = new Intent(this, MainActivity_Old.class);
                 start_app_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 start_app_intent.putExtra(ALARM_STARTED, true);
                 startActivity(start_app_intent);
 
-                PendingIntent start_app_pending_intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+                PendingIntent start_app_pending_intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity_Old.class), 0);
 
                 mNotificationBuilder.setContentTitle(getString(R.string.phone_notification_waiting));
                 // mNotificationBuilder.addAction(android.R.drawable.presence_busy, "Cancel", stopIntent);

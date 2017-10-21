@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <sintef.android.gravity.wizard.FloatingHintEditText
+    <com.timeandtidestudio.emergencybroadcast.wizard.FloatingHintEditText
         android:id="@+id/dialog_next_of_kin_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,7 +15,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"/>
 
-    <sintef.android.gravity.wizard.FloatingHintEditText
+    <com.timeandtidestudio.emergencybroadcast.wizard.FloatingHintEditText
         android:id="@+id/dialog_next_of_kin_telephone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

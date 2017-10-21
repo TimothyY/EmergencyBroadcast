@@ -25,6 +25,7 @@ import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class AlgorithmMain {
 
@@ -38,6 +39,7 @@ public class AlgorithmMain {
         EventBus.getDefault().register(this);
     }
 
+    @Subscribe
     public void onEvent(SensorAlgorithmPack pack){
         boolean isFall = false;
 

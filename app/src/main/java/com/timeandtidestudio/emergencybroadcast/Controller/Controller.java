@@ -31,6 +31,8 @@ import com.timeandtidestudio.emergencybroadcast.Controller.sensor.SensorManager;
 import com.timeandtidestudio.emergencybroadcast.Controller.sensor.SensorSession;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +91,7 @@ public class Controller {
 
     }
 
+    @Subscribe
     public synchronized void onEvent(SensorData data) {
         if (data == null || data.getSensorSession() == null) return;
 

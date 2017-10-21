@@ -34,6 +34,7 @@ import com.timeandtidestudio.emergencybroadcast.Controller.sensor.data.RotationV
 import com.timeandtidestudio.emergencybroadcast.Controller.sensor.data.SensorDataObject;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -72,6 +73,7 @@ public class SensorManager implements SensorEventListener {
         mSensorGroup.put(type, sensorSession);
     }
 
+    @Subscribe
     public void onEvent(EventTypes eventType) {
         switch (eventType) {
             case ONRESUME:
