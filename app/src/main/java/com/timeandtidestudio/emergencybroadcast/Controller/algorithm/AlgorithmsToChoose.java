@@ -85,8 +85,7 @@ public enum AlgorithmsToChoose {
             case ID_WATCH_PATTERN_RECOGNITION:
                 return WATCH_PATTERN_RECOGNITION;
             default:
-//                return ALL;
-                return PHONE_THRESHOLD;
+                return ALL;
         }
     }
 }
