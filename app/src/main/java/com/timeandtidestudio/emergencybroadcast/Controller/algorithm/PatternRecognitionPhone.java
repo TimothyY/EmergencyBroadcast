@@ -148,7 +148,7 @@ public class PatternRecognitionPhone implements Algorithm {
     private static boolean impactPattern(List<LinearAccelerationData> accelerometerData, int index, int iterations, double maxAcceleration){
         double currentAcceleration;
         //iterating from toppoint to see if there is a big deacceleration after it.
-        for (int i = index; i < index+iterations; i++){
+        for (int i = index+1; i < index+iterations; i++){
             currentAcceleration = accelerationTotal(accelerometerData.get(i).getX(), accelerometerData.get(i).getY(), accelerometerData.get(i).getZ());
             if (currentAcceleration*getImpactThreshold() <= maxAcceleration){
                 return true;

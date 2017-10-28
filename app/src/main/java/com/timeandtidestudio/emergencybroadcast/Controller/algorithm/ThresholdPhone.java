@@ -20,6 +20,7 @@ under the License.
 package com.timeandtidestudio.emergencybroadcast.Controller.algorithm;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
 import com.timeandtidestudio.emergencybroadcast.Controller.RecordAlgorithmData;
@@ -45,8 +46,8 @@ public class ThresholdPhone implements Algorithm {
     public static final String VERTICAL_ACCELEROMETER_THRESHOLD = "ver_acc_thr";
     public static final String ACCELEROMETER_COMPARISON_THRESHOLD = "acc_comp_thr";
 
-    public static final double DEFAULT_TOT_ACC_THRESHOLD = 14; //12, 13, 14
-    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 9; //Little under tot_acc I guess
+    public static final double DEFAULT_TOT_ACC_THRESHOLD = 45; //12, 13, 14
+    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 45; //Little under tot_acc I guess
     public static final double DEFAULT_ACC_COMPARISON_THRESHOLD = 0.5; //tot_acc / vertical_acc
 
 
@@ -127,6 +128,19 @@ public class ThresholdPhone implements Algorithm {
         }
 
         if (totalAcceleration >= getTotAccThreshold() && verticalAcceleration >= getVerticalAccThreshold()){
+
+            if(totalAcceleration>=10&&totalAcceleration<20){
+                Log.v("logthT10",""+totalAcceleration+"||"+getTotAccThreshold());
+            }else if(totalAcceleration>=20&&totalAcceleration<30){
+                Log.v("logthT20",""+totalAcceleration+"||"+getTotAccThreshold());
+            }else if(totalAcceleration>=30&&totalAcceleration<40){
+                Log.v("logthT30",""+totalAcceleration+"||"+getTotAccThreshold());
+            }else if(totalAcceleration>=40&&totalAcceleration<50){
+                Log.v("logthT40",""+totalAcceleration+"||"+getTotAccThreshold());
+            }else if(totalAcceleration>=50&&totalAcceleration<60){
+                Log.v("logthT50",""+totalAcceleration+"||"+getTotAccThreshold());
+            }
+
             if (verticalComparedToTotal(verticalAcceleration, totalAcceleration) >= getAccComparisonThreshold()){
                 return true;
             }
