@@ -20,6 +20,7 @@ under the License.
 package com.timeandtidestudio.emergencybroadcast.Controller.algorithm;
 
 import android.hardware.Sensor;
+import android.util.Log;
 
 import com.timeandtidestudio.emergencybroadcast.Controller.RecordAlgorithmData;
 import com.timeandtidestudio.emergencybroadcast.Controller.sensor.SensorData;
@@ -147,7 +148,7 @@ public class PatternRecognitionPhone implements Algorithm {
     private static boolean impactPattern(List<LinearAccelerationData> accelerometerData, int index, int iterations, double maxAcceleration){
         double currentAcceleration;
         //iterating from toppoint to see if there is a big deacceleration after it.
-        for (int i = index+1; i <= index+iterations; i++){
+        for (int i = index+1; i < index+iterations; i++){
             currentAcceleration = accelerationTotal(accelerometerData.get(i).getX(), accelerometerData.get(i).getY(), accelerometerData.get(i).getZ());
             if (currentAcceleration*getImpactThreshold() <= maxAcceleration){
                 return true;

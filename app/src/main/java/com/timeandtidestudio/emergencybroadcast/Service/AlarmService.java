@@ -38,6 +38,7 @@ import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
 import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
+import com.timeandtidestudio.emergencybroadcast.MainActivity;
 import com.timeandtidestudio.emergencybroadcast.MainActivity_Old;
 import com.timeandtidestudio.emergencybroadcast.R;
 
@@ -143,7 +144,7 @@ public class AlarmService extends Service {
 
                 mTimerState = TimerState.RUNNING;
 
-                Intent start_app_intent = new Intent(this, MainActivity_Old.class);
+                Intent start_app_intent = new Intent(this, MainActivity.class);
                 start_app_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 start_app_intent.putExtra(ALARM_STARTED, true);
                 startActivity(start_app_intent);
@@ -155,6 +156,7 @@ public class AlarmService extends Service {
                 mNotificationBuilder.setContentIntent(start_app_pending_intent);
                 mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
 
+                Log.v("nirmala","harusnya notif ganti");
                 mAlarmTask = getAlarmTask();
                 mAlarmTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
