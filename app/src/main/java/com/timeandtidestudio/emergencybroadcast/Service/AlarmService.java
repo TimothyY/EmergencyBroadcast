@@ -31,15 +31,16 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.util.Log;
 
 import com.timeandtidestudio.emergencybroadcast.Controller.AlarmEvent;
 import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
 import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
 import com.timeandtidestudio.emergencybroadcast.MainActivity;
-import com.timeandtidestudio.emergencybroadcast.MainActivity_Old;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -75,6 +76,19 @@ public class AlarmService extends Service {
         }
     };
 
+    private BroadcastReceiver mNotificationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (intent.getAction().compareToIgnoreCase("CANCEL_ACTION")==0) {
+                //stop alarm from waiting to cancelled
+                Log.v("NotificationReceiver", "NotificationReceiver called");
+                if (sVibrator != null) sVibrator.cancel();
+                EventBus.getDefault().post(EventTypes.STOP_ALARM);
+            }
+        }
+    };
+
     private AsyncTask<Void, Integer, Boolean> mAlarmTask;
 
     private final int seconds = 60;
@@ -84,9 +98,9 @@ public class AlarmService extends Service {
     private final int resolution_second = second / resolution_multiplier;
     private final int update_frequency = resolution_multiplier * 4;
 
+    public static Vibrator sVibrator;
     @Override
     public void onCreate() {
-//        EventBus.getDefault().registerSticky(this);
         EventBus.getDefault().register(this);
 
         Controller.initializeController(this);
@@ -96,7 +110,10 @@ public class AlarmService extends Service {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmService.class.getName());
 
+        sVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
         registerReceiver(mScreenStateReceiver, new IntentFilter(Intent.ACTION_SCREEN_OFF));
+        registerReceiver(mNotificationReceiver, new IntentFilter("CANCEL_ACTION"));
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -124,6 +141,7 @@ public class AlarmService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mScreenStateReceiver);
+        unregisterReceiver(mNotificationReceiver);
 
         mWakeLock.release();
         stopForeground(true);
@@ -149,21 +167,33 @@ public class AlarmService extends Service {
                 start_app_intent.putExtra(ALARM_STARTED, true);
                 startActivity(start_app_intent);
 
-                PendingIntent start_app_pending_intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity_Old.class), 0);
+                PendingIntent start_app_pending_intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
 
                 mNotificationBuilder.setContentTitle(getString(R.string.phone_notification_waiting));
-                mNotificationBuilder.addAction(android.R.drawable.presence_busy, "Cancel", stopIntent);
+
+                Intent cancelIntent = new Intent();
+                cancelIntent.setAction("CANCEL_ACTION");
+                PendingIntent piCancel = PendingIntent.getBroadcast(this, 12345, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                mNotificationBuilder.addAction(0, "Cancel", piCancel);
+
                 mNotificationBuilder.setContentIntent(start_app_pending_intent);
                 mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
 
                 mAlarmTask = getAlarmTask();
                 mAlarmTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                sVibrator.vibrate(Constants.ALARM_VIBRATION_PATTERN_ON_WATCH, 0);
+
                 break;
             case ALARM_STOPPED:
+                //notif detecting
+                Log.v("AlarmService","alarm_stopped detected");
             case STOP_ALARM:
+                //notif alarm cancelled
                 if (mAlarmTask != null) {
                     mAlarmTask.cancel(true);
                 }
+                Log.v("AlarmService","stop_alarm detected");
                 break;
 
         }

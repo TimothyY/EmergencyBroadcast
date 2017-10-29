@@ -123,40 +123,6 @@ public class AlarmFragment extends Fragment {
             public void onAlarm() {
 
                 EventBus.getDefault().post(EventTypes.STOP_ALARM);
-                Log.w("Alarm", "notifying EMHT");
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-//                        try {
-//                            String data = "";
-//                            data += "type=fall&";
-//                            data += "callee.phoneNumber=" + getResources().getString(R.string.callee_phone_number) + "&";
-//                            data += "callee.name=" + getResources().getString(R.string.callee_name) + "&";
-//                            data += "callee.address=" + getResources().getString(R.string.callee_address);
-//                            Log.w("Alarm", "postdata is: " + data);
-//                            URL url = new URL(getResources().getString(R.string.server_address) + "/alarm");
-//                            Log.w("Alarm", "emht server url is: " + url.toString());
-//                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-//                            connection.setInstanceFollowRedirects(false);
-//                            connection.setRequestMethod("POST");
-//                            BufferedWriter bw = null;
-//                            try {
-//                                bw = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream(), "UTF-8"));
-//                                bw.write(data);
-//                                bw.flush();
-//                            } finally {
-//                                if (bw != null) bw.close();
-//                            }
-//                            Log.w("Alarm", "connection response code is: " + connection.getResponseCode());
-//                        } catch (MalformedURLException e) {
-//                            e.printStackTrace();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-
-                        return null;
-                    }
-                }.execute();
 
                 Log.w("Alarm", "calling nextofkin");
                 sManager.listen(sPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -192,7 +158,8 @@ public class AlarmFragment extends Fragment {
     }
 
     private void updateAdvancedModeElements() {
-        boolean advancedMenuAvailable = PreferencesHelper.getBoolean(MainActivity.ADVANCED_MENU_AVAILABLE, false);
+//        boolean advancedMenuAvailable = PreferencesHelper.getBoolean(MainActivity.ADVANCED_MENU_AVAILABLE, false);
+        boolean advancedMenuAvailable = false;
         if (advancedMenuAvailable) {
             mAdvancedView.setVisibility(View.VISIBLE);
             mAlarmButton.setOnClickListener(new View.OnClickListener() {
