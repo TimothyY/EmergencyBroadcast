@@ -46,8 +46,8 @@ public class ThresholdPhone implements Algorithm {
     public static final String VERTICAL_ACCELEROMETER_THRESHOLD = "ver_acc_thr";
     public static final String ACCELEROMETER_COMPARISON_THRESHOLD = "acc_comp_thr";
 
-    public static final double DEFAULT_TOT_ACC_THRESHOLD = 45; //12, 13, 14
-    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 45; //Little under tot_acc I guess
+    public static final double DEFAULT_TOT_ACC_THRESHOLD = 25; //12, 13, 14
+    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 25; //Little under tot_acc I guess
     public static final double DEFAULT_ACC_COMPARISON_THRESHOLD = 0.5; //tot_acc / vertical_acc
 
 

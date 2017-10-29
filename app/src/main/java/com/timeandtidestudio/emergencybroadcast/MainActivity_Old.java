@@ -6,25 +6,57 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
+import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
+import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
+import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.Utils;
+import com.timeandtidestudio.emergencybroadcast.Fragment.AlarmFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.ContactListFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.SentMessagesFragment;
 import com.timeandtidestudio.emergencybroadcast.Fragment.UserProfileFragment;
+import com.timeandtidestudio.emergencybroadcast.Service.AlarmService;
+import com.timeandtidestudio.emergencybroadcast.wizard.WizardMain;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class MainActivity_Old extends AppCompatActivity {
 
     FloatingActionButton fab;
     Context mCtx;
+    private static final String TAG = "Main Activity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_old);
 
         mCtx = this;
+
+        if (!Utils.isServiceRunning(this, AlarmService.class)) startDetector();
+
+        EventBus.getDefault().register(this);
+        SoundHelper.initializeSoundsHelper(this);
+        PreferencesHelper.initializePreferences(this);
+
+        if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
+            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, false);
+            startActivity(new Intent(this, WizardMain.class));
+        }
+
+        Controller.initializeController(getApplicationContext());
+        init();
+
+        setContentView(R.layout.activity_main_old);
+
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -49,7 +81,6 @@ public class MainActivity_Old extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -91,4 +122,60 @@ public class MainActivity_Old extends AppCompatActivity {
     };
 
 
+    private void init() {
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+        // getSupportActionBar().setIcon(R.drawable.ic_launcher);
+
+        boolean alarm_started = false;
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey(AlarmService.ALARM_STARTED)) alarm_started = true;
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    @Subscribe
+    public void onEvent(EventTypes types) {
+        switch (types) {
+            case ALARM_STOPPED:
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                break;
+        }
+    }
+
+    private void startDetector() {
+        startService(new Intent(this, AlarmService.class));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        EventBus.getDefault().post(EventTypes.ONRESUME);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().post(EventTypes.ONPAUSE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().post(EventTypes.ONSTOP);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().post(EventTypes.ONDESTROY);
+
+        startActivity(new Intent(this, this.getClass()));
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        EventBus.getDefault().post(EventTypes.FINISH);
+    }
 }

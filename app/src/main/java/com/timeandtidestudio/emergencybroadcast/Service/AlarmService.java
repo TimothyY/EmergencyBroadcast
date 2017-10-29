@@ -152,11 +152,10 @@ public class AlarmService extends Service {
                 PendingIntent start_app_pending_intent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity_Old.class), 0);
 
                 mNotificationBuilder.setContentTitle(getString(R.string.phone_notification_waiting));
-                // mNotificationBuilder.addAction(android.R.drawable.presence_busy, "Cancel", stopIntent);
+                mNotificationBuilder.addAction(android.R.drawable.presence_busy, "Cancel", stopIntent);
                 mNotificationBuilder.setContentIntent(start_app_pending_intent);
                 mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
 
-                Log.v("nirmala","harusnya notif ganti");
                 mAlarmTask = getAlarmTask();
                 mAlarmTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
