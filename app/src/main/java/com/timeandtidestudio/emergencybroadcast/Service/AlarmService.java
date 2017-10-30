@@ -128,7 +128,7 @@ public class AlarmService extends Service {
                 .setContentTitle(getString(R.string.phone_notification_detecting))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_stat_on);
+                .setSmallIcon(R.drawable.ic_vibration_black_24dp);
 
         startForeground(R.string.app_name, mNotificationBuilder.build());
 
@@ -253,7 +253,7 @@ public class AlarmService extends Service {
                         .setContentTitle(alarm ? getString(R.string.phone_notification_sent) : getString(R.string.phone_notification_cancelled))
                         .setAutoCancel(false)
                         .setOngoing(true)
-                        .setSmallIcon(R.drawable.ic_stat_on);
+                        .setSmallIcon(R.drawable.ic_vibration_black_24dp);
                 mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
 
                 mTimerState = alarm ? TimerState.ALARM : TimerState.CANCELLED;
@@ -279,7 +279,7 @@ public class AlarmService extends Service {
                 .setContentTitle(getString(R.string.phone_notification_detecting))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_stat_on);
+                .setSmallIcon(R.drawable.ic_vibration_black_24dp);
 
         mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
     }

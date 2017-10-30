@@ -95,10 +95,10 @@
     <string name="watch_notification_title">Fall Alarm</string>
     <string name="watch_notification_text">Enabled</string>
 
-    <string name="phone_notification_detecting">Detecting</string>
-    <string name="phone_notification_waiting">Waiting to send alarm…</string>
-    <string name="phone_notification_sent">Alarm sent</string>
-    <string name="phone_notification_cancelled">Alarm cancelled</string>
+    <string name="phone_notification_detecting">Emergency Broadcast is Running</string>
+    <string name="phone_notification_waiting">Waiting to send Emergency Broadcast</string>
+    <string name="phone_notification_sent">Emergency Broadcast sent!</string>
+    <string name="phone_notification_cancelled">Emergency Broadcast cancelled</string>
 
     <string name="about_header">Project description</string>
     <string name="about_project_description">The main theme of this project is to create an open source fall detection system using an Android phone and watch.
