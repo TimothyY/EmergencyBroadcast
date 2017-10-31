@@ -26,10 +26,6 @@ public class EBSQLiteHelper extends SQLiteOpenHelper{
     public static final String FIELD_MESSAGES_CONTENT = "messageContent";
     public static final String FIELD_MESSAGES_TIMESTAMP = "messageTimestamp";
 
-    public static final String TABLE_DRAFTEDMESSAGE = "DRAFTEDMESSAGE";
-    public static final String FIELD_DRAFTEDMESSAGE_ID = "messageID";
-    public static final String FIELD_DRAFTEDMESSAGE_CONTENT = "messageContent";
-
     public static synchronized EBSQLiteHelper getInstance(Context context) {
 
         // Use the application context, which will ensure that you
@@ -62,24 +58,10 @@ public class EBSQLiteHelper extends SQLiteOpenHelper{
                 ");";
         db.execSQL(createMessagesQStr);
 
-        String createDraftedMessageQStr="CREATE TABLE IF NOT EXISTS '"+TABLE_DRAFTEDMESSAGE+"' (\n" +
-                "\t'"+FIELD_MESSAGES_ID +"'\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                "\t'"+FIELD_MESSAGES_CONTENT+"'\tTEXT,\n" +
-                "\t'"+FIELD_MESSAGES_TIMESTAMP+"'\tTEXT\n" +
-                ");";
-        db.execSQL(createDraftedMessageQStr);
-
-        ContentValues cvDraftedMessage = new ContentValues();
-        cvDraftedMessage.put(EBSQLiteHelper.FIELD_DRAFTEDMESSAGE_ID, 1);
-        cvDraftedMessage.put(EBSQLiteHelper.FIELD_DRAFTEDMESSAGE_CONTENT, "");
-        db.insertWithOnConflict(EBSQLiteHelper.TABLE_DRAFTEDMESSAGE, null, cvDraftedMessage, SQLiteDatabase.CONFLICT_REPLACE);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String deleteDownloadedTourPackageQStr = "DROP TABLE IF EXISTS "+DB_NAME+"."+TABLE_DRAFTEDMESSAGE;
-        db.execSQL(deleteDownloadedTourPackageQStr);
         String deleteMessagesQStr = "DROP TABLE IF EXISTS "+DB_NAME+"."+TABLE_MESSAGES;
         db.execSQL(deleteMessagesQStr);
         String deleteContactsQStr = "DROP TABLE IF EXISTS "+DB_NAME+"."+TABLE_CONTACTS;

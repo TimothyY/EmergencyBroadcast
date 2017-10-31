@@ -19,6 +19,7 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
     EditText etName,etPhone;
     Button btnSaveContact;
     int contactId;
+    boolean isUpdate = false; //false means it should do insert operation rather than update operation
 
     Context mCtx;
     @Override
@@ -29,8 +30,10 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
 
         try {
             contactId = getIntent().getExtras().getInt("contactId");
+            isUpdate = true;
         }catch (Exception e){
             e.printStackTrace();
+            isUpdate = false;
         }
         etName = (EditText) findViewById(R.id.etName);
         etPhone = (EditText) findViewById(R.id.etPhoneNumber);
@@ -51,11 +54,6 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btnSave:
-//                if(contactId!=0){
-//
-//                }else{
-//
-//                }
                 EmergencyContact emergencyContact =
                         new EmergencyContact(
                                 contactId,

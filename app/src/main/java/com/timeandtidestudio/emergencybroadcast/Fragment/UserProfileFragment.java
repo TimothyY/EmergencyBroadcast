@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.timeandtidestudio.emergencybroadcast.Database.SingularPreference;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 /**
@@ -57,6 +58,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_user_profile, container, false);
         etName = v.findViewById(R.id.etName);
+        etName.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_NAME));
         tMgr = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
@@ -64,54 +66,36 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     1);
         }
         etNumber = v.findViewById(R.id.etPhoneNumber);
+        etNumber.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_NUMBER));
         etAddress = v.findViewById(R.id.etAddress);
+        etAddress.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_ADDRESS));
         etMessage = v.findViewById(R.id.etMessageDraft);
+        etMessage.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_MESSAGE));
         sbVibrate = v.findViewById(R.id.seekBarVibrate);
         sbVibrate.setOnSeekBarChangeListener(this);
+        sbVibrate.post(new Runnable() {
+            @Override
+            public void run() {
+                sbVibrate.setProgress(SingularPreference.getInstance(getContext()).getInt(SingularPreference.Key.SENSOR_SENSITIVITY_INT));
+            }
+        });
         btnSave = v.findViewById(R.id.btnSave);
         btnSave.setOnClickListener(this);
         return v;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    try {
-                        etNumber.setText(tMgr.getLine1Number());
-                    }catch(SecurityException e){
-                        e.printStackTrace();
-                    }
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    Toast.makeText(getActivity(), "Permission denied to read your phone number", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-    @Override
     public void onClick(View view) {
-        Log.v("UsrPrfFrg","Button clicked");
+        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_NAME,etName.getText().toString());
+        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_NUMBER,etNumber.getText().toString());
+        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_ADDRESS,etAddress.getText().toString());
+        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_MESSAGE,etMessage.getText().toString());
+        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.SENSOR_SENSITIVITY_INT,sbVibrate.getProgress());
+        Toast.makeText(getContext(),getResources().getText(R.string.data_saved),Toast.LENGTH_LONG).show();
     }
 
     @Override
-    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-        Log.v("UsrPrfFrg","Seekbar changed: "+i);
-    }
+    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {}
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {

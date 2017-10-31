@@ -24,7 +24,7 @@ public class ContactsDAO {
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
         Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_CONTACTS, null, null, null, null, null, null);
         resultCursor.moveToFirst();
-        contacts = convertCursorIntoContacts(ctx,resultCursor);
+        contacts = convertCursorIntoContacts(resultCursor);
         Collections.sort(contacts);
         db.close();
         return contacts;
@@ -33,9 +33,7 @@ public class ContactsDAO {
     public void saveEmergencyContact(Context ctx, EmergencyContact contact){
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getWritableDatabase();
         ContentValues cv = new ContentValues();
-        if(contact.id!=0){
-            cv.put(EBSQLiteHelper.FIELD_CONTACTS_ID, contact.id);
-        }
+        cv.put(EBSQLiteHelper.FIELD_CONTACTS_ID, contact.id);
         cv.put(EBSQLiteHelper.FIELD_CONTACTS_NAME, contact.name);
         cv.put(EBSQLiteHelper.FIELD_CONTACTS_PHONE, contact.phone);
         db.insertWithOnConflict(EBSQLiteHelper.TABLE_CONTACTS, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
@@ -49,15 +47,15 @@ public class ContactsDAO {
         db.delete(EBSQLiteHelper.TABLE_CONTACTS,selection, selectionArgs);
     }
 
-    public ArrayList<EmergencyContact> convertCursorIntoContacts(Context ctx, Cursor resultCursor){
+    public ArrayList<EmergencyContact> convertCursorIntoContacts(Cursor resultCursor){
         ArrayList<EmergencyContact> contacts = new ArrayList<>();
         while (resultCursor.moveToNext()){
-            contacts.add(convertCursorIntoEmergencyContact(ctx, resultCursor));
+            contacts.add(convertCursorIntoEmergencyContact(resultCursor));
         }
         return contacts;
     }
 
-    public EmergencyContact convertCursorIntoEmergencyContact(Context ctx, Cursor cursor){
+    public EmergencyContact convertCursorIntoEmergencyContact(Cursor cursor){
         EmergencyContact emergencyContact = null;
         int id = cursor.getInt(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_ID));
         String name = cursor.getString(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_NAME));
@@ -66,4 +64,27 @@ public class ContactsDAO {
         return emergencyContact;
     }
 
+    public ArrayList<String> loadNumbers(Context ctx){
+        ArrayList<String> contacts = new ArrayList<>();
+        SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
+        Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+        resultCursor.moveToFirst();
+        contacts = convertCursorIntoPhoneNumbers(resultCursor);
+        Collections.sort(contacts);
+        db.close();
+        return contacts;
+    }
+
+    public ArrayList<String> convertCursorIntoPhoneNumbers(Cursor resultCursor){
+        ArrayList<String> numbers = new ArrayList<>();
+        while (resultCursor.moveToNext()){
+            numbers.add(convertCursorIntoPhoneNumber(resultCursor));
+        }
+        return numbers;
+    }
+
+    public String convertCursorIntoPhoneNumber(Cursor cursor){
+        String number = cursor.getString(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_PHONE));
+        return number;
+    }
 }

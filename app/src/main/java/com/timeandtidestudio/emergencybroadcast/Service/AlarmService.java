@@ -32,6 +32,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.telephony.SmsManager;
 import android.util.Log;
 
 import com.timeandtidestudio.emergencybroadcast.Controller.AlarmEvent;
@@ -40,11 +41,16 @@ import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
 import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
+import com.timeandtidestudio.emergencybroadcast.Database.ContactsDAO;
+import com.timeandtidestudio.emergencybroadcast.Database.SingularPreference;
 import com.timeandtidestudio.emergencybroadcast.MainActivity;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by samyboy89 on 03/02/15.
@@ -91,7 +97,7 @@ public class AlarmService extends Service {
 
     private AsyncTask<Void, Integer, Boolean> mAlarmTask;
 
-    private final int seconds = 60;
+    private final int seconds = 10;
     private final int resolution_multiplier = 4;
     private final int max = seconds * resolution_multiplier;
     private final int second = 1000;
@@ -248,6 +254,9 @@ public class AlarmService extends Service {
             }
 
             private void updateTaskState(boolean alarm) {
+
+                sendEmergencyBroadcastMessage();
+
                 mNotificationBuilder = new Notification.Builder(getApplicationContext())
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setContentTitle(alarm ? getString(R.string.phone_notification_sent) : getString(R.string.phone_notification_cancelled))
@@ -286,5 +295,23 @@ public class AlarmService extends Service {
 
     public enum TimerState {
         PENDING, RUNNING, CANCELLED, ALARM,
+    }
+
+    public void sendEmergencyBroadcastMessage() {
+
+        ContactsDAO contactsDAO = new ContactsDAO();
+        ArrayList<String> phones =contactsDAO.loadNumbers(this);
+
+        SmsManager sms = SmsManager.getDefault();
+        for (String phone:phones) {
+            // if message length is too long messages are divided
+            List<String> messages = sms.divideMessage(SingularPreference.getInstance(getApplicationContext()).getString(SingularPreference.Key.USER_MESSAGE));
+            for (String msg : messages) {
+                PendingIntent sentIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
+                PendingIntent deliveredIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
+                sms.sendTextMessage(phone, null, msg, sentIntent, deliveredIntent);
+            }
+        }
+
     }
 }

@@ -1,13 +1,17 @@
 package com.timeandtidestudio.emergencybroadcast;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton fab;
     Context mCtx;
     private static final String TAG = "Main Activity";
+    private static final int REQUEST_SMS = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
             PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, false);
-            startActivity(new Intent(this, WizardMain.class));
+//            startActivity(new Intent(this, WizardMain.class));
         }
 
         Controller.initializeController(getApplicationContext());
@@ -81,6 +86,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //ask permission for sending sms from the beginning
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasSMSPermission = ContextCompat.checkSelfPermission(getApplicationContext(),android.Manifest.permission.SEND_SMS);
+            if (hasSMSPermission != PackageManager.PERMISSION_GRANTED) {
+                if (!shouldShowRequestPermissionRationale(android.Manifest.permission.SEND_SMS)) {
+                    showMessageOKCancel("You need to allow access to Send SMS",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        requestPermissions(new String[] {android.Manifest.permission.SEND_SMS}, REQUEST_SMS);
+                                    }
+                                }
+                            });
+                    return;
+                }
+                requestPermissions(new String[] {android.Manifest.permission.SEND_SMS}, REQUEST_SMS);
+                return;
+            }
+        }
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -177,5 +203,13 @@ public class MainActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         EventBus.getDefault().post(EventTypes.FINISH);
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new android.support.v7.app.AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .create()
+                .show();
     }
 }
