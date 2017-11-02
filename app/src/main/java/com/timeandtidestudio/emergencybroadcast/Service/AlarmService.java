@@ -255,6 +255,7 @@ public class AlarmService extends Service {
 
             private void updateTaskState(boolean alarm) {
 
+                if (sVibrator != null) sVibrator.cancel();
                 sendEmergencyBroadcastMessage();
 
                 mNotificationBuilder = new Notification.Builder(getApplicationContext())

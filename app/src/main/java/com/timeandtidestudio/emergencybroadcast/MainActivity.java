@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         PreferencesHelper.initializePreferences(this);
 
         if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
-            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, false);
+            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, true);
 //            startActivity(new Intent(this, WizardMain.class));
         }
 

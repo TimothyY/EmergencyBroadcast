@@ -28,13 +28,6 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_update_contact);
         mCtx = this;
 
-        try {
-            contactId = getIntent().getExtras().getInt("contactId");
-            isUpdate = true;
-        }catch (Exception e){
-            e.printStackTrace();
-            isUpdate = false;
-        }
         etName = (EditText) findViewById(R.id.etName);
         etPhone = (EditText) findViewById(R.id.etPhoneNumber);
         btnSaveContact = (Button) findViewById(R.id.btnSave);
@@ -43,6 +36,7 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
             contact = (EmergencyContact) getIntent().getExtras().get("selectedContact");
             etName.setText(contact.name);
             etPhone.setText(contact.phone);
+            isUpdate = true;
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -60,7 +54,13 @@ public class UpdateContactActivity extends AppCompatActivity implements View.OnC
                                 etName.getText().toString(),
                                 etPhone.getText().toString());
                 contactsDAO = new ContactsDAO();
-                contactsDAO.saveEmergencyContact(mCtx,emergencyContact);
+                if(isUpdate){
+                    contactsDAO.updateEmergencyContact(mCtx,contact.id,etName.getText().toString(),etPhone.getText().toString());
+                    Log.v("UpCon","update contact dipanggil");
+                }else{
+                    contactsDAO.insertEmergencyContact(mCtx,etName.getText().toString(),etPhone.getText().toString());
+                    Log.v("UpCon","insert contact dipanggil");
+                }
                 Toast.makeText(mCtx, getString(R.string.contact_saved), Toast.LENGTH_SHORT).show();
                 finish();
                 break;

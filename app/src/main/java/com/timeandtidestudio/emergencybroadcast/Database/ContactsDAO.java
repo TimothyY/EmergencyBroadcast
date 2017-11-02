@@ -23,7 +23,6 @@ public class ContactsDAO {
         ArrayList<EmergencyContact> contacts = new ArrayList<>();
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
         Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_CONTACTS, null, null, null, null, null, null);
-        resultCursor.moveToFirst();
         contacts = convertCursorIntoContacts(resultCursor);
         Collections.sort(contacts);
         db.close();
@@ -68,7 +67,6 @@ public class ContactsDAO {
         ArrayList<String> contacts = new ArrayList<>();
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
         Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_CONTACTS, null, null, null, null, null, null);
-        resultCursor.moveToFirst();
         contacts = convertCursorIntoPhoneNumbers(resultCursor);
         Collections.sort(contacts);
         db.close();
@@ -86,5 +84,30 @@ public class ContactsDAO {
     public String convertCursorIntoPhoneNumber(Cursor cursor){
         String number = cursor.getString(cursor.getColumnIndex(EBSQLiteHelper.FIELD_CONTACTS_PHONE));
         return number;
+    }
+
+    public void insertEmergencyContact(Context mCtx, String newName, String newNumber) {
+        Log.v("COntactDAO","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        try{
+            SQLiteDatabase db = EBSQLiteHelper.getInstance(mCtx).getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(EBSQLiteHelper.FIELD_CONTACTS_NAME, newName);
+            cv.put(EBSQLiteHelper.FIELD_CONTACTS_PHONE, newNumber);
+            db.insert(EBSQLiteHelper.TABLE_CONTACTS, null, cv);
+            db.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        Log.v("COntactDAO","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+
+
+    public void updateEmergencyContact(Context mCtx, int oldId, String newName, String newNumber) {
+        SQLiteDatabase db = EBSQLiteHelper.getInstance(mCtx).getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(EBSQLiteHelper.FIELD_CONTACTS_NAME, newName);
+        cv.put(EBSQLiteHelper.FIELD_CONTACTS_PHONE, newNumber);
+        db.update(EBSQLiteHelper.TABLE_CONTACTS, cv,EBSQLiteHelper.FIELD_CONTACTS_ID+"=?",new String[] { ""+oldId} );
+        db.close();
     }
 }
