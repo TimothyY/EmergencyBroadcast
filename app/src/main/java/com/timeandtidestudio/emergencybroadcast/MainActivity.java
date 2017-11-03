@@ -52,16 +52,7 @@ public class MainActivity extends AppCompatActivity {
         SoundHelper.initializeSoundsHelper(this);
         PreferencesHelper.initializePreferences(this);
 
-        if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
-            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, true);
-//            startActivity(new Intent(this, WizardMain.class));
-        }
-
-        Controller.initializeController(getApplicationContext());
-        init();
-
         setContentView(R.layout.activity_main_old);
-
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -86,6 +77,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (PreferencesHelper.getBoolean(Constants.PREFS_FIRST_START, true)) {
+            PreferencesHelper.putBoolean(PreferencesHelper.FALL_DETECTION_ENABLED, true);
+//            startActivity(new Intent(this, WizardMain.class));
+            navigation.setSelectedItemId(R.id.userProfile);
+        }
+
+        Controller.initializeController(getApplicationContext());
+        init();
 
         //ask permission for sending sms from the beginning
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {

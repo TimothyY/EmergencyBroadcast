@@ -7,6 +7,8 @@
     <android.support.v7.widget.ListViewCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lvContactList"></android.support.v7.widget.ListViewCompat>
+        android:id="@+id/lvContactList"
+        android:divider="#9f9f9f"
+        android:dividerHeight="2px"></android.support.v7.widget.ListViewCompat>
 
 </FrameLayout>

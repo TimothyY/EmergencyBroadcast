@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.timeandtidestudio.emergencybroadcast.Adapter.SentMessagesAdapter;
+import com.timeandtidestudio.emergencybroadcast.Database.MessagesDAO;
 import com.timeandtidestudio.emergencybroadcast.MessageDetailActivity;
 import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
  */
 public class SentMessagesFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    ArrayList<SentMessage> sentMessages;
     Context mCtx;
 
     public SentMessagesFragment() {
@@ -49,26 +49,34 @@ public class SentMessagesFragment extends Fragment implements AdapterView.OnItem
         mCtx = getActivity();
     }
 
+    ListView lvSentMessages;
+    SentMessagesAdapter sentMessagesAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sent_messages, container, false);
 
-        sentMessages = new ArrayList<>();
-        sentMessages.add(new SentMessage("01 January 1972",getString(R.string.lorem_ipsum)));
-        sentMessages.add(new SentMessage("01 January 1971",getString(R.string.lorem_ipsum)));
-
         Context context = view.getContext();
-        ListView lvSentMessages = (ListView) view.findViewById(R.id.lvSentMessages);
-        lvSentMessages.setAdapter(new SentMessagesAdapter(getActivity(),sentMessages)); //on real case, this will be rplaced with data from sqlite/internet
+        lvSentMessages = (ListView) view.findViewById(R.id.lvSentMessages);
+        refreshList();
         lvSentMessages.setOnItemClickListener(this);
         return view;
     }
 
+    ArrayList<SentMessage> sentMessages;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent toDetailMessageIntent = new Intent(mCtx, MessageDetailActivity.class);
         toDetailMessageIntent.putExtra("clickedSentMessage",sentMessages.get(position));
         startActivity(toDetailMessageIntent);
+    }
+
+    MessagesDAO messagesDAO;
+    public void refreshList(){
+        messagesDAO = new MessagesDAO();
+        sentMessages = messagesDAO.loadMessages(mCtx);
+        sentMessagesAdapter = new SentMessagesAdapter(mCtx, sentMessages);
+        sentMessagesAdapter.notifyDataSetChanged();
+        lvSentMessages.setAdapter(sentMessagesAdapter);
     }
 }

@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.timeandtidestudio.emergencybroadcast.Database.SingularPreference;
+import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 /**
@@ -58,7 +58,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_user_profile, container, false);
         etName = v.findViewById(R.id.etName);
-        etName.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_NAME));
+        etName.setText(PreferencesHelper.getString(PreferencesHelper.USER_NAME));
         tMgr = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),
@@ -66,17 +66,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     1);
         }
         etNumber = v.findViewById(R.id.etPhoneNumber);
-        etNumber.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_NUMBER));
+        etNumber.setText(PreferencesHelper.getString(PreferencesHelper.USER_NUMBER));
         etAddress = v.findViewById(R.id.etAddress);
-        etAddress.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_ADDRESS));
+        etAddress.setText(PreferencesHelper.getString(PreferencesHelper.USER_ADDRESS));
         etMessage = v.findViewById(R.id.etMessageDraft);
-        etMessage.setText(SingularPreference.getInstance(getContext()).getString(SingularPreference.Key.USER_MESSAGE));
+        etMessage.setText(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE));
         sbVibrate = v.findViewById(R.id.seekBarVibrate);
         sbVibrate.setOnSeekBarChangeListener(this);
         sbVibrate.post(new Runnable() {
             @Override
             public void run() {
-                sbVibrate.setProgress(SingularPreference.getInstance(getContext()).getInt(SingularPreference.Key.SENSOR_SENSITIVITY_INT));
+                sbVibrate.setProgress(PreferencesHelper.getInt(PreferencesHelper.SENSOR_SENSITIVITY_INT));
             }
         });
         btnSave = v.findViewById(R.id.btnSave);
@@ -86,11 +86,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_NAME,etName.getText().toString());
-        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_NUMBER,etNumber.getText().toString());
-        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_ADDRESS,etAddress.getText().toString());
-        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.USER_MESSAGE,etMessage.getText().toString());
-        SingularPreference.getInstance(getContext()).put(SingularPreference.Key.SENSOR_SENSITIVITY_INT,sbVibrate.getProgress());
+        PreferencesHelper.putString(PreferencesHelper.USER_NAME,etName.getText().toString());
+        PreferencesHelper.putString(PreferencesHelper.USER_NUMBER,etNumber.getText().toString());
+        PreferencesHelper.putString(PreferencesHelper.USER_ADDRESS,etAddress.getText().toString());
+        PreferencesHelper.putString(PreferencesHelper.USER_MESSAGE,etMessage.getText().toString());
+        PreferencesHelper.putInt(PreferencesHelper.SENSOR_SENSITIVITY_INT,sbVibrate.getProgress());
         Toast.makeText(getContext(),getResources().getText(R.string.data_saved),Toast.LENGTH_LONG).show();
     }
 

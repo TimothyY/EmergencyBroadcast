@@ -49,10 +49,8 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         mCtx = getActivity();
     }
 
-    ArrayList<EmergencyContact> contactList;
     ContactListAdapter contactListAdapter;
     ListView lvContactList;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,19 +59,17 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         mCtx = getActivity();
         lvContactList = (ListView) view.findViewById(R.id.lvContactList);
         refreshList();
-        lvContactList.setAdapter(contactListAdapter); //on real case, this will be rplaced with data from sqlite/internet
         lvContactList.setOnItemClickListener(this);
         return view;
     }
 
-
-    ContactsDAO contactsDAO;
     @Override
     public void onResume() {
         super.onResume();
         refreshList();
     }
 
+    ArrayList<EmergencyContact> contactList;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Intent toUpdateContactActivity = new Intent(mCtx, UpdateContactActivity.class);
@@ -81,6 +77,7 @@ public class ContactListFragment extends Fragment implements AdapterView.OnItemC
         startActivity(toUpdateContactActivity);
     }
 
+    ContactsDAO contactsDAO;
     public void refreshList(){
         contactsDAO = new ContactsDAO();
         contactList = contactsDAO.loadContacts(mCtx);

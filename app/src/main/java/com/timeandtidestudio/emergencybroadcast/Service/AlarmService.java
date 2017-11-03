@@ -42,8 +42,9 @@ import com.timeandtidestudio.emergencybroadcast.Controller.common.Constants;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.PreferencesHelper;
 import com.timeandtidestudio.emergencybroadcast.Controller.utils.SoundHelper;
 import com.timeandtidestudio.emergencybroadcast.Database.ContactsDAO;
-import com.timeandtidestudio.emergencybroadcast.Database.SingularPreference;
+import com.timeandtidestudio.emergencybroadcast.Database.MessagesDAO;
 import com.timeandtidestudio.emergencybroadcast.MainActivity;
+import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
 
 import org.greenrobot.eventbus.EventBus;
@@ -105,6 +106,7 @@ public class AlarmService extends Service {
     private final int update_frequency = resolution_multiplier * 4;
 
     public static Vibrator sVibrator;
+    MessagesDAO messagesDAO;
     @Override
     public void onCreate() {
         EventBus.getDefault().register(this);
@@ -112,6 +114,8 @@ public class AlarmService extends Service {
         Controller.initializeController(this);
         SoundHelper.initializeSoundsHelper(this);
         PreferencesHelper.initializePreferences(this);
+
+        messagesDAO = new MessagesDAO();
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmService.class.getName());
@@ -134,7 +138,7 @@ public class AlarmService extends Service {
                 .setContentTitle(getString(R.string.phone_notification_detecting))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_vibration_black_24dp);
+                .setSmallIcon(R.drawable.ic_announcement_white_24dp);
 
         startForeground(R.string.app_name, mNotificationBuilder.build());
 
@@ -289,7 +293,7 @@ public class AlarmService extends Service {
                 .setContentTitle(getString(R.string.phone_notification_detecting))
                 .setAutoCancel(false)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_vibration_black_24dp);
+                .setSmallIcon(R.drawable.ic_announcement_white_24dp);
 
         mNotificationManager.notify(R.string.app_name, mNotificationBuilder.build());
     }
@@ -306,13 +310,13 @@ public class AlarmService extends Service {
         SmsManager sms = SmsManager.getDefault();
         for (String phone:phones) {
             // if message length is too long messages are divided
-            List<String> messages = sms.divideMessage(SingularPreference.getInstance(getApplicationContext()).getString(SingularPreference.Key.USER_MESSAGE));
+            List<String> messages = sms.divideMessage(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE));
             for (String msg : messages) {
                 PendingIntent sentIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
                 PendingIntent deliveredIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
                 sms.sendTextMessage(phone, null, msg, sentIntent, deliveredIntent);
             }
         }
-
+        messagesDAO.saveSentMessage(getApplicationContext(),new SentMessage(""+System.currentTimeMillis(),PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE)));
     }
 }

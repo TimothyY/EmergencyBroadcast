@@ -46,6 +46,12 @@ public class PreferencesHelper {
     public static final String FALL_DETECTION_ENABLED = "fall_detection_enabled";
     public static final String RECORDING_ENABLED = "recording_enabled";
 
+    public static final String USER_NAME = "user_name";
+    public static final String USER_NUMBER = "user_number";
+    public static final String USER_ADDRESS = "user_address";
+    public static final String USER_MESSAGE = "user_message";
+    public static final String SENSOR_SENSITIVITY_INT = "sensor_sensitivity";
+
     public static boolean isFallDetectionEnabled() {
         return PreferencesHelper.getBoolean(FALL_DETECTION_ENABLED, true);
     }
@@ -59,7 +65,7 @@ public class PreferencesHelper {
         }
     }
 
-    private static Context getContext() {
+    public static Context getContext() {
         return context;
     }
 

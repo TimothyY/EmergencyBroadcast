@@ -16,11 +16,10 @@ import java.util.ArrayList;
 
 public class MessagesDAO {
 
-    private ArrayList<SentMessage> loadMessages(Context ctx){
+    public ArrayList<SentMessage> loadMessages(Context ctx){
         ArrayList<SentMessage> messages = new ArrayList<>();
         SQLiteDatabase db = EBSQLiteHelper.getInstance(ctx).getReadableDatabase();
         Cursor resultCursor = db.query(EBSQLiteHelper.TABLE_MESSAGES, null, null, null, null, null, null);
-        resultCursor.moveToFirst();
         messages = convertCursorIntoSentMessages(ctx,resultCursor);
         db.close();
         return messages;

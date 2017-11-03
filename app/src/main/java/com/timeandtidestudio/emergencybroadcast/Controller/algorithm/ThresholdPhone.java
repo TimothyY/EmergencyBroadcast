@@ -47,7 +47,7 @@ public class ThresholdPhone implements Algorithm {
     public static final String ACCELEROMETER_COMPARISON_THRESHOLD = "acc_comp_thr";
 
     public static final double DEFAULT_TOT_ACC_THRESHOLD = 25; //12, 13, 14
-    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 25; //Little under tot_acc I guess
+    public static final double DEFAULT_VERTICAL_ACC_THRESHOLD = 24; //Little under tot_acc I guess
     public static final double DEFAULT_ACC_COMPARISON_THRESHOLD = 0.5; //tot_acc / vertical_acc
 
 
@@ -176,12 +176,18 @@ public class ThresholdPhone implements Algorithm {
         return Math.abs(x * Math.sin(tetaZ) + y * Math.sin(tetaY) - z * Math.cos(tetaY) * Math.cos(tetaZ));
     }
     public static double getTotAccThreshold() {
-        return PreferencesHelper.getFloat(TOTAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_TOT_ACC_THRESHOLD);
+//        return PreferencesHelper.getFloat(TOTAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_TOT_ACC_THRESHOLD);
+        return PreferencesHelper.getFloat(TOTAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_TOT_ACC_THRESHOLD) + (float)PreferencesHelper.getInt(PreferencesHelper.SENSOR_SENSITIVITY_INT);
     }
+
     public static double getVerticalAccThreshold() {
-        return PreferencesHelper.getFloat(VERTICAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_VERTICAL_ACC_THRESHOLD);
+//        return PreferencesHelper.getFloat(VERTICAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_VERTICAL_ACC_THRESHOLD);
+        return PreferencesHelper.getFloat(VERTICAL_ACCELEROMETER_THRESHOLD, (float) DEFAULT_VERTICAL_ACC_THRESHOLD) + (float)PreferencesHelper.getInt(PreferencesHelper.SENSOR_SENSITIVITY_INT);
     }
+
     public static double getAccComparisonThreshold() {
         return PreferencesHelper.getFloat(ACCELEROMETER_COMPARISON_THRESHOLD, (float) DEFAULT_ACC_COMPARISON_THRESHOLD);
     }
+
+
 }

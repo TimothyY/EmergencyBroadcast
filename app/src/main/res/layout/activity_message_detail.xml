@@ -1,36 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.timeandtidestudio.emergencybroadcast.MessageDetailActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvDate"
-        android:text="01 Jan 1971"
-        android:textSize="14sp"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="12dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvHour"
-        android:text="13:00"
-        android:textSize="14sp"
-        android:layout_alignParentRight="true"
-        android:layout_margin="12dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvMessage"
-        android:layout_margin="12dp"
-        android:textSize="16sp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tvDate"
-        android:text="@string/lorem_ipsum"/>
-</RelativeLayout>
+        android:id="@+id/tvDate"
+        android:text="01 Jan 1971"
+        android:textSize="14sp" android:gravity="right"
+        android:layout_marginTop="12dp" android:layout_marginRight="12dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvHour"
+        android:text="13:00"
+        android:textSize="14sp" android:gravity="right"
+        android:layout_marginBottom="12dp" android:layout_marginRight="12dp" android:layout_marginTop="4dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvMessage"
+            android:layout_margin="12dp"
+            android:textSize="18sp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/tvDate"
+            android:text="@string/lorem_ipsum"/>
+    </ScrollView>
+
+</LinearLayout>

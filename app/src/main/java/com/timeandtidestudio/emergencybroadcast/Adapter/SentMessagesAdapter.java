@@ -1,6 +1,7 @@
 package com.timeandtidestudio.emergencybroadcast.Adapter;
 
 import android.content.Context;
+import android.icu.text.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import com.timeandtidestudio.emergencybroadcast.Model.SentMessage;
 import com.timeandtidestudio.emergencybroadcast.R;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
@@ -46,8 +49,11 @@ public class SentMessagesAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater) mCtx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = inflater.inflate(R.layout.row_sent_messages, viewGroup, false);
+        DateTime dt = new DateTime(Long.parseLong(getItem(i).date));
         TextView tvDate = (TextView) rowView.findViewById(R.id.tvDate);
-        tvDate.setText(getItem(i).date);
+        tvDate.setText(dt.toLocalDate().toString());
+        TextView tvHour = (TextView) rowView.findViewById(R.id.tvHour);
+        tvHour.setText(dt.toLocalTime().toString("HH:mm"));
         TextView tvMessage = (TextView) rowView.findViewById(R.id.tvMessage);
         tvMessage.setText(getItem(i).message);
         return rowView;
