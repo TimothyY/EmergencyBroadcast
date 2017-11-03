@@ -121,5 +121,6 @@
     <string name="data_saved">Data saved successfully!</string>
     <string name="title_activity_display_message">Message Detail</string>
     <string name="title_activity_update_contact">Update Contact</string>
+    <string name="send_success">Message sent successfully</string>
 
 </resources>

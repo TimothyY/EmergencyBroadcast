@@ -106,7 +106,6 @@ public class AlarmService extends Service {
     private final int update_frequency = resolution_multiplier * 4;
 
     public static Vibrator sVibrator;
-    MessagesDAO messagesDAO;
     @Override
     public void onCreate() {
         EventBus.getDefault().register(this);
@@ -114,8 +113,6 @@ public class AlarmService extends Service {
         Controller.initializeController(this);
         SoundHelper.initializeSoundsHelper(this);
         PreferencesHelper.initializePreferences(this);
-
-        messagesDAO = new MessagesDAO();
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         mWakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, AlarmService.class.getName());
@@ -317,6 +314,8 @@ public class AlarmService extends Service {
                 sms.sendTextMessage(phone, null, msg, sentIntent, deliveredIntent);
             }
         }
+
+        MessagesDAO messagesDAO = new MessagesDAO();
         messagesDAO.saveSentMessage(getApplicationContext(),new SentMessage(""+System.currentTimeMillis(),PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE)));
     }
 }
