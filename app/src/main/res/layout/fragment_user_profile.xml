@@ -43,15 +43,15 @@
                 android:layout_marginRight="12dp"
                 android:layout_marginBottom="12dp"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/etMessageDraft"
-                android:hint="@string/compose_draft_hint"
-                android:inputType="textMultiLine"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginBottom="12dp"/>
+            <!--<EditText-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/etMessageDraft"-->
+                <!--android:hint="@string/compose_draft_hint"-->
+                <!--android:inputType="textMultiLine"-->
+                <!--android:layout_marginLeft="12dp"-->
+                <!--android:layout_marginRight="12dp"-->
+                <!--android:layout_marginBottom="12dp"/>-->
 
             <TextView
                 android:layout_width="match_parent"

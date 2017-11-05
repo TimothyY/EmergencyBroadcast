@@ -28,7 +28,8 @@ import com.timeandtidestudio.emergencybroadcast.R;
  */
 public class UserProfileFragment extends Fragment implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
-    EditText etName, etNumber, etAddress, etMessage;
+    EditText etName, etNumber, etAddress;
+//    EditText etMessage;
     SeekBar sbVibrate;
     Button btnSave;
 
@@ -69,8 +70,8 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         etNumber.setText(PreferencesHelper.getString(PreferencesHelper.USER_NUMBER));
         etAddress = v.findViewById(R.id.etAddress);
         etAddress.setText(PreferencesHelper.getString(PreferencesHelper.USER_ADDRESS));
-        etMessage = v.findViewById(R.id.etMessageDraft);
-        etMessage.setText(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE));
+//        etMessage = v.findViewById(R.id.etMessageDraft);
+//        etMessage.setText(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE));
         sbVibrate = v.findViewById(R.id.seekBarVibrate);
         sbVibrate.setOnSeekBarChangeListener(this);
         sbVibrate.post(new Runnable() {
@@ -89,7 +90,11 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         PreferencesHelper.putString(PreferencesHelper.USER_NAME,etName.getText().toString());
         PreferencesHelper.putString(PreferencesHelper.USER_NUMBER,etNumber.getText().toString());
         PreferencesHelper.putString(PreferencesHelper.USER_ADDRESS,etAddress.getText().toString());
-        PreferencesHelper.putString(PreferencesHelper.USER_MESSAGE,etMessage.getText().toString());
+        String generatedMessage = "HELP! I ("+ etName.getText().toString() +"), am facing an accident & currently unable to move. "
+                +"MyContact:"+ etNumber.getText().toString()
+                +". MyAddress: "+etAddress.getText().toString()
+                +".";
+        PreferencesHelper.putString(PreferencesHelper.USER_MESSAGE,generatedMessage);
         PreferencesHelper.putInt(PreferencesHelper.SENSOR_SENSITIVITY_INT,sbVibrate.getProgress());
         Toast.makeText(getContext(),getResources().getText(R.string.data_saved),Toast.LENGTH_LONG).show();
     }

@@ -19,6 +19,7 @@ under the License.
 
 package com.timeandtidestudio.emergencybroadcast.Service;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -27,14 +28,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Criteria;
+import android.location.Location;
+
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.os.ResultReceiver;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.timeandtidestudio.emergencybroadcast.Controller.AlarmEvent;
 import com.timeandtidestudio.emergencybroadcast.Controller.Controller;
 import com.timeandtidestudio.emergencybroadcast.Controller.EventTypes;
@@ -56,7 +69,7 @@ import java.util.List;
 /**
  * Created by samyboy89 on 03/02/15.
  */
-public class AlarmService extends Service {
+public class AlarmService extends Service implements LocationListener {
 
     private NotificationManager mNotificationManager;
     private Notification.Builder mNotificationBuilder;
@@ -87,7 +100,7 @@ public class AlarmService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if (intent.getAction().compareToIgnoreCase("CANCEL_ACTION")==0) {
+            if (intent.getAction().compareToIgnoreCase("CANCEL_ACTION") == 0) {
                 //stop alarm from waiting to cancelled
                 Log.v("NotificationReceiver", "NotificationReceiver called");
                 if (sVibrator != null) sVibrator.cancel();
@@ -105,9 +118,16 @@ public class AlarmService extends Service {
     private final int resolution_second = second / resolution_multiplier;
     private final int update_frequency = resolution_multiplier * 4;
 
+    Context mCtx;
     public static Vibrator sVibrator;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    static AddressResultReceiver mAddressResultReceiver;
+
     @Override
     public void onCreate() {
+        mCtx = getApplicationContext();
+
         EventBus.getDefault().register(this);
 
         Controller.initializeController(this);
@@ -125,6 +145,32 @@ public class AlarmService extends Service {
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         EventBus.getDefault().post(EventTypes.ONRESUME);
+
+        // Create an instance of GoogleAPIClient.
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                        @Override
+                        public void onConnected(@Nullable Bundle bundle) {
+
+                        }
+
+                        @Override
+                        public void onConnectionSuspended(int i) {
+
+                        }
+                    })
+                    .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                        @Override
+                        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                        }
+                    })
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+        mAddressResultReceiver = new AddressResultReceiver(new Handler());
     }
 
     @Override
@@ -147,6 +193,7 @@ public class AlarmService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mGoogleApiClient.disconnect();
         unregisterReceiver(mScreenStateReceiver);
         unregisterReceiver(mNotificationReceiver);
 
@@ -300,22 +347,110 @@ public class AlarmService extends Service {
     }
 
     public void sendEmergencyBroadcastMessage() {
+        getLocation();
+    }
 
-        ContactsDAO contactsDAO = new ContactsDAO();
-        ArrayList<String> phones =contactsDAO.loadNumbers(this);
+    private void startIntentService() {
+        // Create an intent for passing to the intent service responsible for fetching the address.
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
 
-        SmsManager sms = SmsManager.getDefault();
-        for (String phone:phones) {
-            // if message length is too long messages are divided
-            List<String> messages = sms.divideMessage(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE));
-            for (String msg : messages) {
-                PendingIntent sentIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
-                PendingIntent deliveredIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
-                sms.sendTextMessage(phone, null, msg, sentIntent, deliveredIntent);
-            }
+        // Pass the result receiver as an extra to the service.
+        intent.putExtra(FetchAddressIntentService.Constants.RECEIVER, mAddressResultReceiver);
+
+        // Pass the location data as an extra to the service.
+        intent.putExtra(FetchAddressIntentService.Constants.LOCATION_DATA_EXTRA, mLastLocation);
+
+        // Start the service. If the service isn't already running, it is instantiated and started
+        // (creating a process for it if needed); if it is running then it remains running. The
+        // service kills itself automatically once all intents are processed.
+        startService(intent);
+    }
+
+    private class AddressResultReceiver extends ResultReceiver {
+        /**
+         * Create a new ResultReceive to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         *
+         * @param handler
+         */
+        @SuppressLint("RestrictedApi")
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
         }
 
-        MessagesDAO messagesDAO = new MessagesDAO();
-        messagesDAO.saveSentMessage(getApplicationContext(),new SentMessage(""+System.currentTimeMillis(),PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE)));
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string or an error message sent from the intent service.
+            String mAddressOutput = resultData.getString(FetchAddressIntentService.Constants.RESULT_DATA_KEY);
+
+            // Show a toast message if an address was found.
+            if (resultCode == FetchAddressIntentService.Constants.SUCCESS_RESULT) {
+                Log.v("AddrRsltRcvr","address found: "+mAddressOutput);
+            }
+
+            ContactsDAO contactsDAO = new ContactsDAO();
+            ArrayList<String> phones =contactsDAO.loadNumbers(mCtx);
+
+            SmsManager sms = SmsManager.getDefault();
+            for (String phone:phones) {
+                // if message length is too long messages are divided
+                List<String> messages = sms.divideMessage(PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE)+"[Last known position: "+mAddressOutput+"]");
+                for (String msg : messages) {
+                    PendingIntent sentIntent = PendingIntent.getBroadcast(mCtx, 0, new Intent("SMS_SENT"), 0);
+                    PendingIntent deliveredIntent = PendingIntent.getBroadcast(mCtx, 0, new Intent("SMS_DELIVERED"), 0);
+                    sms.sendTextMessage(phone, null, msg, sentIntent, deliveredIntent);
+                }
+            }
+
+            MessagesDAO messagesDAO = new MessagesDAO();
+            messagesDAO.saveSentMessage(getApplicationContext(),new SentMessage(""+System.currentTimeMillis(),PreferencesHelper.getString(PreferencesHelper.USER_MESSAGE)));
+        }
     }
+
+    public LocationManager locationManager;
+    public Criteria criteria;
+    public String bestProvider;
+    protected void getLocation() {
+        locationManager = (LocationManager)  this.getSystemService(Context.LOCATION_SERVICE);
+        criteria = new Criteria();
+        bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true)).toString();
+
+//        You can still do this if you like, you might get lucky:
+//        try{mLastLocation = locationManager.getLastKnownLocation(bestProvider);}catch(SecurityException e){}
+//        if (mLastLocation != null) {
+//            Log.v("GPS ON", "Latitude:"+mLastLocation.getLatitude());
+//            startIntentService();
+//        } else{}
+        try{
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, this);
+        }catch(SecurityException e){e.printStackTrace();}
+
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        locationManager.removeUpdates(this);//remove location callback:
+        Log.v("pew","Latitude"+":"+location.getLatitude());
+        startIntentService();
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
 }
