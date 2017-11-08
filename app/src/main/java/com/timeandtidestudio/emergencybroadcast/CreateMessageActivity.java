@@ -26,6 +26,7 @@ public class CreateMessageActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_create_message);
 
         etCompose = (EditText)findViewById(R.id.etMessageDraft);

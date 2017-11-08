@@ -111,7 +111,7 @@ public class AlarmService extends Service implements LocationListener {
 
     private AsyncTask<Void, Integer, Boolean> mAlarmTask;
 
-    private final int seconds = 10;
+    private final int seconds = 60;
     private final int resolution_multiplier = 4;
     private final int max = seconds * resolution_multiplier;
     private final int second = 1000;

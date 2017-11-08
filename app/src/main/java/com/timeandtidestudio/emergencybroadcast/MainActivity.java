@@ -36,13 +36,15 @@ import com.timeandtidestudio.emergencybroadcast.wizard.WizardMain;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     FloatingActionButton fab;
     Context mCtx;
-    private static final String TAG = "Main Activity";
-    private static final int REQUEST_SMS = 0;
-    private static final int REQUEST_LOCATION = 1;
+    private static final int REQUEST_PERMISSIONS = 99;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,40 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         //ask permission for sending sms and access location from the beginning
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            int hasSMSPermission = ContextCompat.checkSelfPermission(getApplicationContext(),android.Manifest.permission.SEND_SMS);
-            int hasAccessLocationPermission =  ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-            if (hasSMSPermission != PackageManager.PERMISSION_GRANTED) {
-                if (!shouldShowRequestPermissionRationale(android.Manifest.permission.SEND_SMS)) {
-                    showMessageOKCancel("You need to allow access to Send SMS & Location Access",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        requestPermissions(new String[] {android.Manifest.permission.SEND_SMS}, REQUEST_SMS);
-                                    }
-                                }
-                            });
-                    return;
-                }
-                requestPermissions(new String[] {android.Manifest.permission.SEND_SMS}, REQUEST_SMS);
-                return;
-            }
-            if (hasAccessLocationPermission != PackageManager.PERMISSION_GRANTED) {
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    showMessageOKCancel("You need to allow access to Send SMS & Location Access",
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                                    }
-                                }
-                            });
-                    return;
-                }
-                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-                return;
-            }
+            checkAndRequestPermissions();
         }
 
         if (!Utils.isServiceRunning(this, AlarmService.class)) startDetector();
@@ -231,5 +200,23 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("OK", okListener)
                 .create()
                 .show();
+    }
+
+    private boolean checkAndRequestPermissions() {
+        int permissionSMS = ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS);
+        int permissionLocation = ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (permissionLocation != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if (permissionSMS != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.SEND_SMS);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this,listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_PERMISSIONS);
+            return false;
+        }
+        return true;
     }
 }
